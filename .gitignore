@@ -29,3 +29,5 @@ jwt_secret.env
 _goose_db_version
 data/
 db
+
+node_modules/
