@@ -2,11 +2,11 @@
   "name": "naira-pay-api",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/main.js",
+  "main": "main.ts",
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "start": "node dist/main.js"
+    "start": "node main.ts"
   },
   "keywords": [],
   "author": "",
