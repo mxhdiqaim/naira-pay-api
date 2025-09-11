@@ -5,6 +5,8 @@ import {SendRequest} from "../types";
 import {StatusCodeEnum} from "../types/enum";
 import {getEnvVariable} from "../utils";
 
+const CHAIN_ID = 80002 as const;
+
 // Get environment variables using the utility function
 const openForSecretKey = getEnvVariable('OPENFORT_SECRET_KEY');
 const openFortDeveloperAccountId = getEnvVariable('OPENFORT_DEVELOPER_ACCOUNT_ID');
@@ -33,9 +35,9 @@ export const sendTransactionHandler = async (req: Request, res: Response) => {
 
         // Create the transaction intent
         const transactionIntent = await openfort.transactionIntents.create({
-            account: senderWallet, // The user's wallet
-            chainId: 80001, // Polygon Mumbai Testnet
-            optimistic: true, // Speeds up the transaction confirmation
+            account: senderWallet,
+            chainId: CHAIN_ID, // Amoy Testnet
+            optimistic: true, // This speeds up the transaction confirmation
             interactions: [interactionTransfer],
             policy: openFortDeveloperAccountId, // Use the developer account to sponsor gas
         });

@@ -21,22 +21,15 @@ export const authHandler = async (req: Request, res: Response) => {
         const player = await openfort.players.create({
             name: 'NairaPay User',
             metadata: {
-                googleId: 'google-oauth2|1234567890', // this will be replaced with actual Google user ID
                 authProviderToken: token,
             },
         });
 
-        // Creating an Embedded Wallet for the Player
-        // Const wallet = await openfort.players.createEmbeddedWallet(player.id, {
-        //     chainId: 80001, // Polygon Mumbai Testnet
-        //     externalAuthProvider: 'google',
-        //     token,
-        // });
 
         const wallet = await openfort.accounts.create({
             player: player.id,
-            chainId: 80001, // Polygon Mumbai Testnet
-            // tokenId: token
+            chainId: 80002, // Polygon Mumbai Testnet
+            externalOwnerAddress: token
         })
 
         const response: AuthResponse = {
