@@ -9,7 +9,7 @@ import path from "path";
 // import configureSession from "./config/session-config";
 
 // import handlers from "./handlers";
-import routes from "./routes";
+// import routes from "./routes";
 
 import rateLimit from "express-rate-limit";
 
