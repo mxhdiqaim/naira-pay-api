@@ -2,14 +2,9 @@ import { Request, Response } from 'express';
 import Openfort from '@openfort/openfort-node';
 import {StatusCodeEnum} from "../types/enum";
 import {AuthRequest, AuthResponse} from "../types";
+import { getEnvVariable } from "../utils";
 
-
-
-const openForSecretKey = process.env.OPENFORT_SECRET_KEY;
-
-if (!openForSecretKey) {
-    throw new Error('OPENFORT_SECRET_KEY is not defined in environment variables');
-}
+const openForSecretKey = getEnvVariable('OPENFORT_SECRET_KEY');
 
 // Initialise the Openfort client with the secret key
 const openfort = new Openfort(openForSecretKey as string);

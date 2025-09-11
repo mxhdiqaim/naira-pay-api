@@ -3,26 +3,15 @@ import Openfort from '@openfort/openfort-node';
 import {parseUnits} from "ethers";
 import {SendRequest} from "../types";
 import {StatusCodeEnum} from "../types/enum";
+import {getEnvVariable} from "../utils";
 
-const openForSecretKey = process.env.OPENFORT_SECRET_KEY;
-
-if (!openForSecretKey) {
-    throw new Error('OPENFORT_SECRET_KEY is not defined in environment variables');
-}
+// Get environment variables using the utility function
+const openForSecretKey = getEnvVariable('OPENFORT_SECRET_KEY');
+const openFortDeveloperAccountId = getEnvVariable('OPENFORT_DEVELOPER_ACCOUNT_ID');
+const usdcContractId = getEnvVariable('USDC_CONTRACT_ID');
 
 // Initialise the Openfort client and your backend developer account
-const openfort = new Openfort(openForSecretKey as string);
-
-// It will be used to pay for gas.
-const openFortDeveloperAccountId = process.env.OPENFORT_DEVELOPER_ACCOUNT_ID;
-if (!openFortDeveloperAccountId) {
-    throw new Error('OPENFORT_DEVELOPER_ACCOUNT_ID is not defined in environment variables');
-}
-
-const usdcContractId =  process.env.USDC_CONTRACT_ID; // This will be replaced with the actual USDC contract ID on Polygon Mumbai
-if (!usdcContractId) {
-    throw new Error('USDC_CONTRACT_ID is not defined in environment variables');
-}
+const openfort = new Openfort(openForSecretKey);
 
 export const sendTransactionHandler = async (req: Request, res: Response) => {
     try {
