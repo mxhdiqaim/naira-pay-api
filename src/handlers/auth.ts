@@ -1,51 +1,55 @@
 import { Request, Response } from 'express';
 import Openfort from '@openfort/openfort-node';
+import {StatusCodeEnum} from "../types/enum";
+import {AuthRequest, AuthResponse} from "../types";
 
-interface AuthRequest {
-    token: string;
+
+
+const openForSecretKey = process.env.OPENFORT_SECRET_KEY;
+
+if (!openForSecretKey) {
+    throw new Error('OPENFORT_SECRET_KEY is not defined in environment variables');
 }
 
-interface AuthResponse {
-    walletAddress: string;
-}
-
-// Initialize the Openfort client with your secret key
-const openfort = new Openfort(process.env.OPENFORT_SECRET_KEY as string);
+// Initialise the Openfort client with the secret key
+const openfort = new Openfort(openForSecretKey as string);
 
 export const authHandler = async (req: Request, res: Response) => {
     try {
         const { token } = req.body as AuthRequest;
 
         if (!token) {
-            return res.status(400).json({ error: 'Token is required.' });
+            return res.status(StatusCodeEnum.BAD_REQUEST).json({ error: 'Token is required.' });
         }
 
-        // Step 1: Create a Player (user) in Openfort
-        // This is a logical step to link a user account to a wallet
+        // Create a Player (user) in Openfort
         const player = await openfort.players.create({
             name: 'NairaPay User',
             metadata: {
-                // You can add user-specific metadata here, like their social ID
+                googleId: 'google-oauth2|1234567890', // this will be replaced with actual Google user ID
                 authProviderToken: token,
             },
         });
 
-        // Step 2: Create an Embedded Wallet for the Player
-        // NOTE: This function may need to be called client-side depending on the SDK.
-        // However, for a backend-driven flow, this is the expected call.
-        // const wallet = await openfort.players.createEmbeddedWallet(player.id, {
-        const wallet = await openfort.players.createEmbeddedWallet(player.id, {
+        // Creating an Embedded Wallet for the Player
+        // Const wallet = await openfort.players.createEmbeddedWallet(player.id, {
+        //     chainId: 80001, // Polygon Mumbai Testnet
+        //     externalAuthProvider: 'google',
+        //     token,
+        // });
+
+        const wallet = await openfort.accounts.create({
+            player: player.id,
             chainId: 80001, // Polygon Mumbai Testnet
-            externalAuthProvider: 'google',
-            token,
-        });
+            // tokenId: token
+        })
 
         const response: AuthResponse = {
             walletAddress: wallet.address,
         };
-        res.status(200).json(response);
+        res.status(StatusCodeEnum.OK).json(response);
     } catch (error) {
         console.error('Authentication error:', error);
-        res.status(500).json({ error: 'Failed to authenticate and create wallet.' });
+        res.status(StatusCodeEnum.INTERNAL_SERVER_ERROR).json({ error: 'Failed to authenticate and create wallet.' });
     }
 };
