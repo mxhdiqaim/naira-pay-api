@@ -10,4 +10,5 @@ export interface AuthRequest {
 
 export interface AuthResponse {
     walletAddress: string;
+    message?: string;
 }

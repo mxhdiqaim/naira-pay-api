@@ -30,10 +30,13 @@ const URL =
         ? [
             "http://localhost:3000",
             "http://localhost:3001",
+            "http://localhost:3002",
             "http://localhost:8080",
+            "http://localhost:8081",
+            "http://localhost:8082",
         ]
         : [
-            `https://${process.env.CLIENT_DOMAIN}` /* `https://${process.env.FORM_DOMAIN}` */,
+            `https://${process.env.CLIENT_DOMAIN}`,
         ];
 
 // Session
@@ -63,7 +66,7 @@ app.get("/", (_req, res) => {
 // Protect Routes
 //app.use(authorityCheck);
 
-/** Routes */
+// Routes
 app.use(routes);
 
 app.use(express.static(path.join(__dirname, "public")));
@@ -79,5 +82,5 @@ app.use((req, res, next) => {
     next(error);
 });
 
-/** Server */
+// Server
 export default http.createServer(app);
