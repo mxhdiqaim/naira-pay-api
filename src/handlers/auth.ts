@@ -1,13 +1,11 @@
 import { Request, Response } from 'express';
-import Openfort, { CreateAccountRequest, AccountResponse } from '@openfort/openfort-node';
+import openfort from '../config/openfort-client';
 import { StatusCodeEnum } from "../types/enum";
+import { CreateAccountRequest } from "@openfort/openfort-node";
 import { AuthRequest } from "../types";
 import { getEnvVariable } from "../utils";
 
-// Initialise the Openfort client and policy ONCE
-const openForSecretKey = getEnvVariable('OPENFORT_SECRET_KEY');
 const chainId = parseInt(getEnvVariable('CHAIN_ID'));
-const openfort = new Openfort(openForSecretKey);
 
 export const authHandler = async (req: Request, res: Response) => {
     try {
@@ -26,8 +24,6 @@ export const authHandler = async (req: Request, res: Response) => {
         const account = await openfort.accounts.create({
             player: player.id,
             chainId,
-            externalOwnerAddress: token,
-            // accountType: 'custodial',
             // externalAuthProvider: {
             //     google: {
             //         token
