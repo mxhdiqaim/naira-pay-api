@@ -44,7 +44,7 @@ export const sendTransactionHandler = async (req: Request, res: Response) => {
 
         res.status(StatusCodeEnum.OK).json({
             transactionIntentId: transactionIntent.id,
-            // status: transactionIntent.status,
+            status: transactionIntent.response?.status,
             message: 'Transaction intent created successfully.',
         });
     } catch (error) {

@@ -3,7 +3,6 @@ import "dotenv/config";
 const PORT = process.env.PORT || "8081";
 
 (async () => {
-
     const port = parseInt(PORT);
     const server = (await import("./src/server")).default;
 
@@ -13,10 +12,14 @@ const PORT = process.env.PORT || "8081";
         switch (error.code) {
             case "EACCES":
                 console.error(bind + " requires elevated privileges");
-                process.exit(1);
+                // process.exit(1);
+                return;
+
             case "EADDRINUSE":
                 console.error(bind + " is already in use");
-                process.exit(1);
+                // process.exit(1);
+                return;
+
             default:
                 console.error(error);
         }
