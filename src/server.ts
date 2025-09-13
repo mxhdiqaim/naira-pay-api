@@ -55,7 +55,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json({ limit: "5mb" }));
 
 // RULES OF OUR API
-app.use((req, res, next) => {
+app.use((_req, _res, next) => {
     next();
 });
 
@@ -72,7 +72,7 @@ app.use(routes);
 app.use(express.static(path.join(__dirname, "public")));
 
 // Error handling
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
     const error = new Error("not found");
 
     res.status(StatusCodeEnum.NOT_FOUND).json({
