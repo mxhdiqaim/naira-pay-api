@@ -5,8 +5,6 @@ import morgan from "morgan";
 
 import path from "path";
 
-import configureSession from "./config/session-config";
-
 import routes from "./routes";
 
 import rateLimit from "express-rate-limit";
@@ -35,9 +33,6 @@ const URL =
         : [
             `https://${process.env.CLIENT_DOMAIN}`,
         ];
-
-// Session
-configureSession(app);
 
 // CORS
 app.use(cors({ credentials: true, origin: URL }));
