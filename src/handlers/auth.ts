@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import openfort from '../config/openfort-client';
 import { StatusCodeEnum } from "../types/enum";
-import { CreateAccountRequest } from "@openfort/openfort-node";
 import { AuthRequest } from "../types";
 import { getEnvVariable } from "../utils";
 

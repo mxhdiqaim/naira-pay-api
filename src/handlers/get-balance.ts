@@ -4,7 +4,7 @@ import { StatusCodeEnum } from '../types/enum';
 import { ethers } from 'ethers';
 
 const polygonAmoyRpcUrl = getEnvVariable('POLYGON_AMOY_RPC_URL');
-const usdcContractAddress = getEnvVariable('USDC_CONTRACT_ADDRESS');
+const contractAddress = getEnvVariable('CONTRACT_ADDRESS');
 const usdcDecimals = parseInt(getEnvVariable('USDC_CONTRACT_DECIMALS') || '6', 10);
 
 // A minimal ERC-20 ABI to get the balance
@@ -13,7 +13,7 @@ const usdcAbi = [
 ];
 
 const provider = new ethers.JsonRpcProvider(polygonAmoyRpcUrl);
-const usdcContract = new ethers.Contract(usdcContractAddress, usdcAbi, provider);
+const usdcContract = new ethers.Contract(contractAddress, usdcAbi, provider);
 
 export const getBalanceHandler = async (req: Request, res: Response) => {
     try {

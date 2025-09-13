@@ -31,9 +31,6 @@ const URL =
             "http://localhost:3000",
             "http://localhost:3001",
             "http://localhost:3002",
-            "http://localhost:8080",
-            "http://localhost:8081",
-            "http://localhost:8082",
         ]
         : [
             `https://${process.env.CLIENT_DOMAIN}`,
@@ -62,9 +59,6 @@ app.use((_req, _res, next) => {
 app.get("/", (_req, res) => {
     res.status(StatusCodeEnum.OK).json({ message: "API is up and running" });
 });
-
-// Protect Routes
-//app.use(authorityCheck);
 
 // Routes
 app.use(routes);
