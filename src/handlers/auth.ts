@@ -3,11 +3,9 @@ import openfort from '../config/openfort-client';
 import { StatusCodeEnum } from "../types/enum";
 import { AuthRequest } from "../types";
 import { getEnvVariable } from "../utils";
+import { OAuthProvider, CreateAccountRequest, TokenType } from '@openfort/openfort-node';
 
 const chainId = parseInt(getEnvVariable('CHAIN_ID'));
-
-const apiKey = getEnvVariable('OPENFORT_SECRET_KEY');
-const baseUrl = getEnvVariable('OPENFORT_BASEURL');
 
 export const authHandler = async (req: Request, res: Response) => {
     try {
@@ -17,70 +15,41 @@ export const authHandler = async (req: Request, res: Response) => {
             return res.status(StatusCodeEnum.BAD_REQUEST).json({ error: 'Token is required.' });
         }
 
-        // Make direct API call to avoid serialisation issues
-        const response = await fetch(`${baseUrl}/iam/v1/oauth/verify`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                provider: "google",
-                token: token,
-                tokenType: "idToken"
-            })
+        const playerResponse = await openfort.iam.verifyOAuthToken({
+            provider: "google" as OAuthProvider,
+            token: token,
+            tokenType: "idToken" as TokenType,
         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('API Error:', errorText);
+        // const playerResponse = await openfort.iam.verifyAuthToken(token)
 
-            throw new Error(`API call failed: ${response.status}`);
-        }
+        console.log("playerResponse", playerResponse);
 
-        const newPlayer = await response.json();
-
-        // // Create the request object manually to avoid union type serialization issues
-        // const authRequest = {
-        //     provider: "google", // Direct string value
-        //     token: token,
-        //     tokenType: "idToken"
-        // };
-        //
-        // // Verify the OAuth token to get or create a player.
-        // const newPlayer = await openfort.iam.verifyOAuthToken(authRequest as any);
-
-
-        // Create a Player (user record)
-        // const newPlayer = await openfort.players.create({
-        //     name: "NairaPay User",
-        // });
-
-        // Check if the player already has an account.
-        if (newPlayer.accounts && newPlayer.accounts.length > 0) {
-            const account = newPlayer.accounts[0];
+        // Check if the player already has an account (wallet)
+        if (playerResponse.accounts && playerResponse.accounts.length > 0) {
+            const account = playerResponse.accounts[0];
             const response = {
                 walletAddress: account.address,
-                playerId: newPlayer.id,
+                playerId: playerResponse.id,
                 message: "Account already exists."
             };
 
             return res.status(StatusCodeEnum.OK).json(response);
         }
 
-
-        // Create an Account (wallet) and link it to the Player AND the social token
-        const newAccount = await openfort.accounts.create({
-            player: newPlayer.id,
+        // If no wallet exists, create a new one for this player
+        const createAccountRequest: CreateAccountRequest = {
+            player: playerResponse.id,
             chainId,
-        });
+        };
+
+        const newAccount = await openfort.accounts.create(createAccountRequest);
 
         // The response the frontend expects
         const responseObj = {
             walletAddress: newAccount.address,
-            playerId: newPlayer.id,
+            playerId: playerResponse.id,
             message: "New wallet created."
-            // Include other player details here
         };
 
         res.status(StatusCodeEnum.OK).json(responseObj);
